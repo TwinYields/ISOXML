@@ -1,4 +1,25 @@
-﻿using System;
+﻿/*
+ *  This file is part of ISOXML
+ *
+ *  Copyright 2022 Juha Backman & Matti Pastell / Natural Resources Institute Finland
+ *
+ *  ISOXML is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as
+ *  published by the Free Software Foundation, either version 3 of
+ *  the License, or (at your option) any later version.
+ *
+ *  ISOXML is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with ISOXML.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
@@ -80,7 +101,7 @@ namespace ISOXML
     }
     public static class TimeLogReader
     {
-        //Find correct file in case sensitive file systems 
+        //Find correct file in case sensitive file systems
         static string FindFile(string directory, string name)
         {
             return Directory.GetFiles(directory).Where(x => x.ToLower().EndsWith(name.ToLower())).Single();
@@ -135,7 +156,7 @@ namespace ISOXML
                 products = TZN.First().Descendants("PDV").ToDictionary(attr => attr.Attribute("D").Value,
                     attr => productPDTs[attr.Attribute("C").Value]);
 
-            // Read binary timelog files 
+            // Read binary timelog files
             foreach (var TSK in ISOTaskFile.Root.Descendants("TSK"))
             {
                 foreach (var TLG in TSK.Descendants("TLG"))
