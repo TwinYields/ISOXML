@@ -1,3 +1,5 @@
 .vs
 ISOXML/bin
 ISOXML/obj
+ISOXML_test/obj
+ISOXML_test/bin
