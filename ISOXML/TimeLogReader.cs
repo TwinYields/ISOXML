@@ -94,6 +94,7 @@ namespace ISOXML
         public string field;
         public string farm;
         public List<string> devices;
+        public List<string> clientnames;
         public Dictionary<string, string> products;
 
         public List<LogElement> datalogheader = new List<LogElement>();
@@ -167,6 +168,7 @@ namespace ISOXML
                     TLGdata.farm = ISOTaskFile.Root.Descendants("FRM").Where(frm => frm.Attribute("A").Value == TSK.Attribute("D").Value).Single().Attribute("B").Value;
                     List<string> devicelist = TSK.Elements("DAN").Attributes("C").Select(attr => attr.Value).ToList();
                     TLGdata.devices = ISOTaskFile.Root.Descendants("DVC").Where(dvc => devicelist.Contains(dvc.Attribute("A").Value)).Attributes("B").Select(attr => attr.Value).ToList();
+                    TLGdata.clientnames = ISOTaskFile.Root.Descendants("DVC").Where(dvc => devicelist.Contains(dvc.Attribute("A").Value)).Attributes("D").Select(attr => attr.Value).ToList();
                     TLGdata.products = products;
 
                     // read header
