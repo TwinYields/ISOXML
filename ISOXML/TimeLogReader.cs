@@ -93,8 +93,8 @@ namespace ISOXML
         public string taskname;
         public string field;
         public string farm;
-        public List<string> devices;
         public Dictionary<string, string> products;
+        public List<Dictionary<string, string>> devices;
 
         public List<LogElement> datalogheader = new List<LogElement>();
         public List<LogElement> datalogdata = new List<LogElement>();
@@ -165,9 +165,22 @@ namespace ISOXML
                     TLGdata.taskname = TSK.Attribute("B").Value;
                     TLGdata.field = ISOTaskFile.Root.Descendants("PFD").Where(pdf => pdf.Attribute("A").Value == TSK.Attribute("E").Value).Single().Attribute("C").Value;
                     TLGdata.farm = ISOTaskFile.Root.Descendants("FRM").Where(frm => frm.Attribute("A").Value == TSK.Attribute("D").Value).Single().Attribute("B").Value;
-                    List<string> devicelist = TSK.Elements("DAN").Attributes("C").Select(attr => attr.Value).ToList();
-                    TLGdata.devices = ISOTaskFile.Root.Descendants("DVC").Where(dvc => devicelist.Contains(dvc.Attribute("A").Value)).Attributes("B").Select(attr => attr.Value).ToList();
                     TLGdata.products = products;
+
+                    List<Dictionary<string, string>> devicelist = new List<Dictionary<string, string>>();
+                    List<string> devicerefs = TSK.Elements("DAN").Attributes("C").Select(attr => attr.Value).ToList();
+
+                    foreach (var deviceref in devicerefs)
+                    {
+                        Dictionary<string, string> devicedict = new Dictionary<string, string>();
+                        string devicename = ISOTaskFile.Root.Descendants("DVC").Single(dvc => dvc.Attribute("A").Value == deviceref).Attribute("B").Value;
+                        string clientname = ISOTaskFile.Root.Descendants("DVC").Single(dvc => dvc.Attribute("A").Value == deviceref).Attribute("D").Value;
+                        devicedict.Add("device", devicename);
+                        devicedict.Add("clientname", clientname);
+                        devicelist.Add(devicedict);
+                    }
+
+                    TLGdata.devices = devicelist;
 
                     // read header
                     string header_file = FindFile(directory, TLG.Attribute("A").Value + ".xml");
