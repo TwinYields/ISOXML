@@ -152,7 +152,7 @@ namespace ISOXML
                 attr => attr.Attribute("A").Value, attr => attr.Attribute("B").Value);
             var TZN = ISOTaskFile.Root.Descendants("TZN");
             Dictionary<string, string> products = productPDTs;
-            if (TZN.Count() > 0)
+            if (TZN.Count() > 0 && products.Count >0)
                 products = TZN.First().Descendants("PDV").ToDictionary(attr => attr.Attribute("D").Value,
                     attr => productPDTs[attr.Attribute("C").Value]);
 
@@ -164,7 +164,11 @@ namespace ISOXML
                     TimeLogData TLGdata = new TimeLogData();
                     TLGdata.taskname = TSK.Attribute("B").Value;
                     TLGdata.field = ISOTaskFile.Root.Descendants("PFD").Where(pdf => pdf.Attribute("A").Value == TSK.Attribute("E").Value).Single().Attribute("C").Value;
-                    TLGdata.farm = ISOTaskFile.Root.Descendants("FRM").Where(frm => frm.Attribute("A").Value == TSK.Attribute("D").Value).Single().Attribute("B").Value;
+                    
+                    if (ISOTaskFile.Root.Descendants("FRM").Count() > 0) {
+                        TLGdata.farm = ISOTaskFile.Root.Descendants("FRM").Where(frm => frm.Attribute("A").Value == TSK.Attribute("D").Value).Single().Attribute("B").Value;
+                    }
+                    
                     TLGdata.products = products;
 
                     List<Dictionary<string, string>> devicelist = new List<Dictionary<string, string>>();
