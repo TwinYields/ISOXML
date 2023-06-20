@@ -152,9 +152,21 @@ namespace ISOXML
                 attr => attr.Attribute("A").Value, attr => attr.Attribute("B").Value);
             var TZN = ISOTaskFile.Root.Descendants("TZN");
             Dictionary<string, string> products = productPDTs;
+
+            // Try to link product names with DETs and fall back to using PDT name if
+            // it fails (some tested task files are missing PDV attribute D).
             if (TZN.Count() > 0 && products.Count >0)
-                products = TZN.First().Descendants("PDV").ToDictionary(attr => attr.Attribute("D").Value,
-                    attr => productPDTs[attr.Attribute("C").Value]);
+            {
+                try
+                {
+                    products = TZN.First().Descendants("PDV").ToDictionary(attr => attr.Attribute("D").Value,
+                        attr => productPDTs[attr.Attribute("C").Value]);
+                }
+                catch (System.NullReferenceException)
+                {
+                    //Console.WriteLine("PDT exception");
+                }
+            }
 
             // Read binary timelog files
             foreach (var TSK in ISOTaskFile.Root.Descendants("TSK"))
