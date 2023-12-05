@@ -171,6 +171,49 @@ namespace ISOXML
             // Read binary timelog files
             foreach (var TSK in ISOTaskFile.Root.Descendants("TSK"))
             {
+                if (TSK.Attribute("G").Value == "1")
+                {
+                    Console.WriteLine("Planned task");
+                    TimeLogData TLGdata = new TimeLogData();
+                    TLGdata.taskname = TSK.Attribute("B").Value;
+                    Console.WriteLine(TLGdata.taskname);
+                    TLGdata.field = ISOTaskFile.Root.Descendants("PFD").Where(pdf => pdf.Attribute("A").Value == TSK.Attribute("E").Value).Single().Attribute("C").Value;
+                    Console.WriteLine(TLGdata.field);
+
+                    if (ISOTaskFile.Root.Descendants("FRM").Count() > 0)
+                    {
+                        TLGdata.farm = ISOTaskFile.Root.Descendants("FRM").Where(frm => frm.Attribute("A").Value == TSK.Attribute("D").Value).Single().Attribute("B").Value;
+                    }
+
+                    Console.WriteLine(TLGdata.farm);
+
+                    TLGdata.products = products;
+
+                    foreach (var kvp in products)
+                            {
+                                Console.WriteLine($"{kvp.Key}: {kvp.Value}");
+                            }
+
+                    List<Dictionary<string, string>> devicelist = new List<Dictionary<string, string>>();
+                    List<string> devicerefs = TSK.Elements("DAN").Attributes("C").Select(attr => attr.Value).ToList();
+
+                    foreach (var deviceref in devicerefs)
+                    {
+                        Dictionary<string, string> devicedict = new Dictionary<string, string>();
+                        string devicename = ISOTaskFile.Root.Descendants("DVC").Single(dvc => dvc.Attribute("A").Value == deviceref).Attribute("B").Value;
+                        string clientname = ISOTaskFile.Root.Descendants("DVC").Single(dvc => dvc.Attribute("A").Value == deviceref).Attribute("D").Value;
+                        devicedict.Add("device", devicename);
+                        devicedict.Add("clientname", clientname);
+                        devicelist.Add(devicedict);
+                    }
+
+                    TLGdata.devices = devicelist;
+
+                    TLGList.Add(TLGdata);
+                }
+
+                else
+                {
                 foreach (var TLG in TSK.Descendants("TLG"))
                 {
                     TimeLogData TLGdata = new TimeLogData();
