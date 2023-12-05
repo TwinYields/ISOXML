@@ -168,9 +168,9 @@ namespace ISOXML
                 }
             }
 
-            // Read binary timelog files
             foreach (var TSK in ISOTaskFile.Root.Descendants("TSK"))
             {
+                // Read XML-files of planned task
                 if (TSK.Attribute("G").Value == "1")
                 {
                     Console.WriteLine("Planned task:");
@@ -215,6 +215,7 @@ namespace ISOXML
 
                 else
                 {
+                    // Read binary timelog files of implemented task
                 foreach (var TLG in TSK.Descendants("TLG"))
                 {
                     TimeLogData TLGdata = new TimeLogData();
