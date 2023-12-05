@@ -178,28 +178,12 @@ namespace ISOXML
                     TimeLogData TLGdata = new TimeLogData();
                     TLGdata.taskname = TSK.Attribute("B").Value;
                     TLGdata.field = ISOTaskFile.Root.Descendants("PFD").Where(pdf => pdf.Attribute("A").Value == TSK.Attribute("E").Value).Single().Attribute("C").Value;
+                    TLGdata.products = products;
 
                     if (ISOTaskFile.Root.Descendants("FRM").Count() > 0)
                     {
                         TLGdata.farm = ISOTaskFile.Root.Descendants("FRM").Where(frm => frm.Attribute("A").Value == TSK.Attribute("D").Value).Single().Attribute("B").Value;
                     }
-
-                    TLGdata.products = products;
-
-                    List<Dictionary<string, string>> devicelist = new List<Dictionary<string, string>>();
-                    List<string> devicerefs = TSK.Elements("DAN").Attributes("C").Select(attr => attr.Value).ToList();
-
-                    foreach (var deviceref in devicerefs)
-                    {
-                        Dictionary<string, string> devicedict = new Dictionary<string, string>();
-                        string devicename = ISOTaskFile.Root.Descendants("DVC").Single(dvc => dvc.Attribute("A").Value == deviceref).Attribute("B").Value;
-                        string clientname = ISOTaskFile.Root.Descendants("DVC").Single(dvc => dvc.Attribute("A").Value == deviceref).Attribute("D").Value;
-                        devicedict.Add("device", devicename);
-                        devicedict.Add("clientname", clientname);
-                        devicelist.Add(devicedict);
-                    }
-
-                    TLGdata.devices = devicelist;
 
                     Console.WriteLine(TLGdata.taskname);
                     Console.WriteLine(TLGdata.field);
