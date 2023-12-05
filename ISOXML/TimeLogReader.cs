@@ -438,13 +438,11 @@ namespace ISOXML
                     reader.Close();
                     TLGList.Add(TLGdata);
                 }
+                }
 
 
             }
             return TLGList;
         }
-
-
-
     }
 }
