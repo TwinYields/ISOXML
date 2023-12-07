@@ -173,8 +173,6 @@ namespace ISOXML
                 // Read XML-files of planned task
                 if (TSK.Attribute("G").Value == "1")
                 {
-                    Console.WriteLine("Planned task:");
-                    Console.WriteLine(TSK.Attribute("A").Value);
                     TimeLogData TLGdata = new TimeLogData();
                     TLGdata.taskname = TSK.Attribute("B").Value;
                     TLGdata.field = ISOTaskFile.Root.Descendants("PFD").Where(pdf => pdf.Attribute("A").Value == TSK.Attribute("E").Value).Single().Attribute("C").Value;
@@ -183,15 +181,6 @@ namespace ISOXML
                     if (ISOTaskFile.Root.Descendants("FRM").Count() > 0)
                     {
                         TLGdata.farm = ISOTaskFile.Root.Descendants("FRM").Where(frm => frm.Attribute("A").Value == TSK.Attribute("D").Value).Single().Attribute("B").Value;
-                    }
-
-                    Console.WriteLine(TLGdata.taskname);
-                    Console.WriteLine(TLGdata.field);
-                    Console.WriteLine(TLGdata.farm);
-
-                    foreach (var kvp in products)
-                    {
-                        Console.WriteLine($"{kvp.Key}: {kvp.Value}");
                     }
 
                     TLGList.Add(TLGdata);
