@@ -168,9 +168,27 @@ namespace ISOXML
                 }
             }
 
-            // Read binary timelog files
             foreach (var TSK in ISOTaskFile.Root.Descendants("TSK"))
             {
+                // Read XML-files of planned task
+                if (TSK.Attribute("G").Value == "1")
+                {
+                    TimeLogData TLGdata = new TimeLogData();
+                    TLGdata.taskname = TSK.Attribute("B").Value;
+                    TLGdata.field = ISOTaskFile.Root.Descendants("PFD").Where(pdf => pdf.Attribute("A").Value == TSK.Attribute("E").Value).Single().Attribute("C").Value;
+                    TLGdata.products = products;
+
+                    if (ISOTaskFile.Root.Descendants("FRM").Count() > 0)
+                    {
+                        TLGdata.farm = ISOTaskFile.Root.Descendants("FRM").Where(frm => frm.Attribute("A").Value == TSK.Attribute("D").Value).Single().Attribute("B").Value;
+                    }
+
+                    TLGList.Add(TLGdata);
+                }
+
+                else
+                {
+                    // Read binary timelog files of implemented task
                 foreach (var TLG in TSK.Descendants("TLG"))
                 {
                     TimeLogData TLGdata = new TimeLogData();
@@ -395,13 +413,11 @@ namespace ISOXML
                     reader.Close();
                     TLGList.Add(TLGdata);
                 }
+                }
 
 
             }
             return TLGList;
         }
-
-
-
     }
 }
