@@ -193,12 +193,21 @@ namespace ISOXML
                 {
                     TimeLogData TLGdata = new TimeLogData();
                     TLGdata.taskname = TSK.Attribute("B").Value;
-                    TLGdata.field = ISOTaskFile.Root.Descendants("PFD").Where(pdf => pdf.Attribute("A").Value == TSK.Attribute("E").Value).Single().Attribute("C").Value;
-                    
+
+                    try
+                    {
+                        TLGdata.field = ISOTaskFile.Root.Descendants("PFD").Where(pdf => pdf.Attribute("A").Value == TSK.Attribute("E").Value).Single().Attribute("C").Value;
+                    }
+                    catch
+                    {
+                        TLGdata.field = "";
+                    }
+
+
                     if (ISOTaskFile.Root.Descendants("FRM").Count() > 0) {
                         TLGdata.farm = ISOTaskFile.Root.Descendants("FRM").Where(frm => frm.Attribute("A").Value == TSK.Attribute("D").Value).Single().Attribute("B").Value;
                     }
-                    
+
                     TLGdata.products = products;
 
                     List<Dictionary<string, string>> devicelist = new List<Dictionary<string, string>>();
