@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 using System.Linq;
+using System.Globalization;
 
 namespace ISOXML
 {
@@ -407,7 +408,7 @@ namespace ISOXML
                             LogElementType<System.String> element = (LogElementType<System.String>)header.Current;
                             DateTime date = new DateTime();
                             date = date.AddMilliseconds(reader.ReadUInt32());
-                            element.values.Add(date.ToString("HH:mm:ss.fff"));
+                            element.values.Add(date.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture));
                         }
                         else if (header.Current.type == typeof(System.Byte))
                         {
