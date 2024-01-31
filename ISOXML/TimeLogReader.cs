@@ -226,8 +226,11 @@ namespace ISOXML
                     }
 
 
-                    if (ISOTaskFile.Root.Descendants("FRM").Count() > 0) {
+                    try {
                         TLGdata.farm = ISOTaskFile.Root.Descendants("FRM").Where(frm => frm.Attribute("A").Value == TSK.Attribute("D").Value).Single().Attribute("B").Value;
+                    }
+                    catch {
+                        TLGdata.farm = "";
                     }
 
                     TLGdata.products = products;
