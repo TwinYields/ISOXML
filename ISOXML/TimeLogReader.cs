@@ -128,11 +128,10 @@ namespace ISOXML
 
             foreach (var XFR in XFRlist)
             {
-                string file = FindFile(directory, XFR.Attribute("A").Value + ".xml");
-
                 XDocument EXTFile;
                 try
                 {
+                    string file = FindFile(directory, XFR.Attribute("A").Value + ".xml");
                     EXTFile = XDocument.Load(file);
                 }
                 catch (System.IO.FileNotFoundException e)
@@ -174,8 +173,23 @@ namespace ISOXML
                 if (TSK.Attribute("G").Value == "1")
                 {
                     TimeLogData TLGdata = new TimeLogData();
-                    TLGdata.taskname = TSK.Attribute("B").Value;
-                    TLGdata.field = ISOTaskFile.Root.Descendants("PFD").Where(pdf => pdf.Attribute("A").Value == TSK.Attribute("E").Value).Single().Attribute("C").Value;
+
+                    if (TSK.Attribute("B") != null) {
+                        TLGdata.taskname = TSK.Attribute("B").Value;
+                    }
+                    else
+                    {
+                        TLGdata.taskname = "";
+                    }
+
+
+                    try {
+                        TLGdata.field = ISOTaskFile.Root.Descendants("PFD").Where(pdf => pdf.Attribute("A").Value == TSK.Attribute("E").Value).Single().Attribute("C").Value;
+                    }
+                    catch {
+                        TLGdata.field = "";
+                    }
+
                     TLGdata.products = products;
 
                     if (ISOTaskFile.Root.Descendants("FRM").Count() > 0)
@@ -192,7 +206,14 @@ namespace ISOXML
                 foreach (var TLG in TSK.Descendants("TLG"))
                 {
                     TimeLogData TLGdata = new TimeLogData();
-                    TLGdata.taskname = TSK.Attribute("B").Value;
+
+                    try {
+                        TLGdata.taskname = TSK.Attribute("B").Value;
+                    }
+                    catch
+                    {
+                        TLGdata.taskname = "";
+                    }
 
                     try
                     {
@@ -300,7 +321,7 @@ namespace ISOXML
                         }
                         catch (System.InvalidOperationException)
                         {
-                            Console.WriteLine("Process data description not found!");
+                            //Console.WriteLine("Process data description not found!");
 
                             LogElementType<System.Int32> logelement = new LogElementType<System.Int32>(DeviceElementIdRef,
                                     "", "", "", ProcessDataDDI);
@@ -317,7 +338,7 @@ namespace ISOXML
                     }
 
 
-                    Console.WriteLine(TLG.Attribute("A").Value);
+                    //Console.WriteLine(TLG.Attribute("A").Value);
                     /*Console.WriteLine("******* Header: **********");
                     foreach (var element in TLGdata.datalogheader)
                     {
@@ -331,7 +352,14 @@ namespace ISOXML
                     Console.WriteLine("==============================================");*/
 
                     // read binary
-                    string binary_file = FindFile(directory, TLG.Attribute("A").Value + ".BIN");
+                    // the binary can be missing
+                    string binary_file;
+                    try {
+                        binary_file = FindFile(directory, TLG.Attribute("A").Value + ".BIN");
+                    }
+                    catch {
+                        break;
+                    }
 
                     BinaryReader reader = new BinaryReader(new FileStream(binary_file, FileMode.Open));
                     List<LogElement>.Enumerator header = TLGdata.datalogheader.GetEnumerator();
@@ -343,7 +371,7 @@ namespace ISOXML
                             header = TLGdata.datalogheader.GetEnumerator();
                             if (!header.MoveNext())
                             {
-                                Console.WriteLine("NO HEADER FOR DATA");
+                                //Console.WriteLine("NO HEADER FOR DATA");
                                 return TLGList;
                             }
 
